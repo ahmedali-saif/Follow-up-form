@@ -5,20 +5,38 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>إرسال الموقع إلى Google Sheets</title>
   <style>
-    body { font-family: system-ui; direction: rtl; padding: 20px; }
-    button { padding: 10px 20px; font-size: 16px; }
-    #status { margin-top: 10px; color: #333; }
+    body {
+      font-family: system-ui, sans-serif;
+      direction: rtl;
+      padding: 20px;
+      text-align: center;
+      background: #f8f9fa;
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 18px;
+      border: none;
+      background: #0069d9;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover { background: #0056b3; }
+    #status {
+      margin-top: 15px;
+      font-size: 16px;
+      color: #333;
+    }
   </style>
 </head>
 <body>
-  <h2>إرسال الموقع إلى Google Sheets</h2>
-  <button id="sendBtn">📍 إرسال موقعي الآن</button>
+  <h2>📍 إرسال موقعي إلى Google Sheets</h2>
+  <button id="sendBtn">إرسال موقعي الآن</button>
   <div id="status"></div>
 
   <script>
-    // استخدم رابط Web App الذي زودتني به
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwe-06SCHOwL6vKOZhUpQw2eo8952eE86UJwt7fX5ICNkkdRKbDeyHWBeE-2owOfy5h/exec";
-
+    // ضع هنا رابط Web App الذي حصلت عليه من النشر
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxe-apynr11CL0rdGyfIEGFzmxD3Ve5MUXBMlDqL91HkJu6-bhoX4oyZkA0oYxnPI5G/exec";
     const statusDiv = document.getElementById("status");
 
     function setStatus(msg, isError = false) {
@@ -28,23 +46,29 @@
 
     async function sendLocation(lat, lon) {
       try {
-        const payload = { lat, lon };
-        await fetch(SCRIPT_URL, {
+        const response = await fetch(SCRIPT_URL, {
           method: "POST",
           mode: "cors",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
+          body: JSON.stringify({ lat, lon })
         });
-        setStatus("✅ تم إرسال الموقع بنجاح إلى الشيت!");
+
+        if (!response.ok) throw new Error("HTTP error " + response.status);
+        const result = await response.json();
+        if (result.result === "success") {
+          setStatus("✅ تم إرسال الموقع بنجاح إلى الشيت!");
+        } else {
+          setStatus("⚠️ حدث خطأ في السكربت: " + result.message, true);
+        }
       } catch (err) {
         console.error(err);
-        setStatus("❌ خطأ أثناء الإرسال: " + err.message, true);
+        setStatus("❌ فشل الإرسال: " + err.message, true);
       }
     }
 
     function requestLocation() {
       if (!navigator.geolocation) {
-        setStatus("المتصفح لا يدعم تحديد الموقع.", true);
+        setStatus("❌ المتصفح لا يدعم تحديد الموقع.", true);
         return;
       }
       setStatus("⏳ جاري تحديد الموقع...");
@@ -52,12 +76,13 @@
         pos => {
           const lat = pos.coords.latitude;
           const lon = pos.coords.longitude;
-          setStatus(`تم الحصول على الموقع: ${lat.toFixed(6)}, ${lon.toFixed(6)} — جاري الإرسال...`);
+          setStatus(`تم تحديد الموقع: ${lat.toFixed(6)}, ${lon.toFixed(6)} — جاري الإرسال...`);
           sendLocation(lat, lon);
         },
         err => {
           setStatus("⚠️ خطأ في تحديد الموقع: " + err.message, true);
-        }
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
       );
     }
 
@@ -65,4 +90,3 @@
   </script>
 </body>
 </html>
-
