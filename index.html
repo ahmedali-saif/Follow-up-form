@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ar">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>إرسال الموقع إلى Google Sheets</title>
+  <style>
+    body { font-family: system-ui; direction: rtl; padding: 20px; }
+    button { padding: 10px 20px; font-size: 16px; }
+    #status { margin-top: 10px; color: #333; }
+  </style>
+</head>
+<body>
+  <h2>إرسال الموقع إلى Google Sheets</h2>
+  <button id="sendBtn">📍 إرسال موقعي الآن</button>
+  <div id="status"></div>
+
+  <script>
+    // استخدم رابط Web App الذي زودتني به
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby-9Z2n_qXVPdTQB6EPJUWrNRZiBblVQNPgFCGewz0aTXZ1aNuIVRKJIG4gJI5GQdKc/exec";
+
+    const statusDiv = document.getElementById("status");
+
+    function setStatus(msg, isError = false) {
+      statusDiv.textContent = msg;
+      statusDiv.style.color = isError ? "crimson" : "black";
+    }
+
+    async function sendLocation(lat, lon) {
+      try {
+        const payload = { lat, lon };
+        await fetch(SCRIPT_URL, {
+          method: "POST",
+          mode: "cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        setStatus("✅ تم إرسال الموقع بنجاح إلى الشيت!");
+      } catch (err) {
+        console.error(err);
+        setStatus("❌ خطأ أثناء الإرسال: " + err.message, true);
+      }
+    }
+
+    function requestLocation() {
+      if (!navigator.geolocation) {
+        setStatus("المتصفح لا يدعم تحديد الموقع.", true);
+        return;
+      }
+      setStatus("⏳ جاري تحديد الموقع...");
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
+          setStatus(`تم الحصول على الموقع: ${lat.toFixed(6)}, ${lon.toFixed(6)} — جاري الإرسال...`);
+          sendLocation(lat, lon);
+        },
+        err => {
+          setStatus("⚠️ خطأ في تحديد الموقع: " + err.message, true);
+        }
+      );
+    }
+
+    document.getElementById("sendBtn").addEventListener("click", requestLocation);
+  </script>
+</body>
+</html>
