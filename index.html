@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>جلب البيانات من Google Sheets</title>
+    <title>استمارة متابعة المنشآت البيطرية الخاصة</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -152,10 +152,10 @@
 </head>
 <body>
     <div class="container">
-        <h1>بحث في البيانات من Google Sheets</h1>
-        
+        <h1>(متابعة المنشآت البيطرية الخاصة)</h1>
+         <h1>الملاحظات التي تم تسجيلها على المنشأة البيطرية أثناء الزيارات السابقة</h1>
         <div class="search-box">
-            <input type="text" id="searchKey" placeholder="أدخل مفتاح البحث من العمود A">
+            <input type="text" id="searchKey" placeholder="أدخل اسم المنشأة البيطرية">
             
             <div class="button-group">
                 <button onclick="searchData()">بحث</button>
@@ -171,11 +171,11 @@
             <table id="resultsTable">
                 <thead>
                     <tr>
-                        <th>العمود A</th>
-                        <th>العمود B</th>
-                        <th>العمود C</th>
-                        <th>العمود D</th>
-                        <th>العمود E</th>
+                        <th>اسم المنشأة</th>
+                        <th>الجهة</th>
+                        <th>التاريخ</th>
+                        <th>الملاحظات</th>
+                        <th>المرفق</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -290,7 +290,7 @@
             const searchKey = document.getElementById('searchKey').value.trim();
             
             if (!searchKey) {
-                document.getElementById('error').textContent = 'يرجى إدخال مفتاح البحث';
+                document.getElementById('error').textContent = 'يرجى إدخال اسم المنشأة البيطرية';
                 return;
             }
 
@@ -325,3 +325,4 @@
     </script>
 </body>
 </html>
+
