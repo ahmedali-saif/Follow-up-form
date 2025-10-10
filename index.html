@@ -13,7 +13,7 @@
             margin: 20px;
         }
         .container {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
             background-color: white;
             padding: 20px;
@@ -40,17 +40,26 @@
             background-color: #4285f4;
             color: white;
             cursor: pointer;
+            transition: background-color 0.3s;
         }
         button:hover {
             background-color: #3367d6;
         }
+        .btn-form {
+            background-color: #34a853;
+        }
+        .btn-form:hover {
+            background-color: #2e8b47;
+        }
         .results {
             margin-top: 20px;
+            overflow-x: auto;
         }
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
+            min-width: 600px;
         }
         th, td {
             border: 1px solid #ddd;
@@ -59,6 +68,8 @@
         }
         th {
             background-color: #f2f2f2;
+            position: sticky;
+            top: 0;
         }
         .error {
             color: red;
@@ -68,16 +79,55 @@
             color: #4285f4;
             margin-top: 10px;
         }
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .button-group button {
+            flex: 1;
+            min-width: 150px;
+        }
+        .link {
+            color: #1a73e8;
+            text-decoration: underline;
+            cursor: pointer;
+            word-break: break-all;
+        }
+        .link:hover {
+            color: #0d47a1;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+                margin: 10px;
+            }
+            .button-group button {
+                min-width: 120px;
+                font-size: 14px;
+            }
+            th, td {
+                padding: 8px;
+                font-size: 14px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>بحث في البيانات من Google Sheets</h1>
+         <h1>(متابعة المنشآت البيطرية الخاصة) </h1>
+        
+       <h1>الملاحظات التي تم تسجيلها على المنشآت البيطرية أثناء الزيارات السابقة </h1>
         
         <div class="search-box">
-            <input type="text" id="searchKey" placeholder="أدخل مفتاح البحث من العمود A">
-            <button onclick="searchData()">بحث</button>
-            <button onclick="loadAllData()">عرض كل البيانات</button>
+            <input type="text" id="searchKey" placeholder="أدخل اسم المنشأة البيطرية">
+            
+            <div class="button-group">
+                <button onclick="searchData()">بحث</button>
+                <button onclick="loadAllData()">عرض كل البيانات</button>
+                <button class="btn-form" onclick="openForm()">اذهب إلى النموذج</button>
+            </div>
         </div>
 
         <div id="loading" class="loading" style="display: none;">جاري تحميل البيانات...</div>
@@ -87,9 +137,11 @@
             <table id="resultsTable">
                 <thead>
                     <tr>
-                        <th>العمود A</th>
-                        <th>العمود B</th>
-                        <th>العمود C</th>
+                        <th>اسم المنشأة البيطرية</th>
+                        <th>الجهة</th>
+                        <th>التاريخ</th>
+                        <th>الملاحظات</th>
+                        <th>المرفق</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -101,6 +153,30 @@
     <script>
         // تحويل الرابط إلى رابط CSV
         const sheetUrl = 'https://docs.google.com/spreadsheets/d/1k9schTfP0FLnxVsENzZJqEPiE8fMoL5ZY0ZCyp5lSuw/export?format=csv&gid=0';
+
+        // رابط النموذج
+        const formUrl = 'https://forms.gle/W1AhBrUqoV76eaMN6';
+
+        // دالة للتحقق من أن النص هو رابط
+        function isValidURL(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+
+        // دالة لإصلاح الروابط إذا كانت غير مكتملة
+        function fixURL(url) {
+            if (!url) return '';
+            
+            // إذا كان الرابط لا يبدأ بـ http أو https، أضف https://
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                return 'https://' + url;
+            }
+            return url;
+        }
 
         async function fetchData() {
             try {
@@ -132,11 +208,13 @@
                 if (line) {
                     // تقسيم السطر مع مراعاة الفاصلة
                     const cells = line.split(',').map(cell => cell.trim());
-                    if (cells.length >= 3) {
+                    if (cells.length >= 1) {
                         result.push({
                             columnA: cells[0] || '',
                             columnB: cells[1] || '',
-                            columnC: cells[2] || ''
+                            columnC: cells[2] || '',
+                            columnD: cells[3] || '',
+                            columnE: cells[4] || ''
                         });
                     }
                 }
@@ -149,16 +227,26 @@
             tableBody.innerHTML = '';
 
             if (data.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="3" style="text-align: center;">لا توجد بيانات</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">لا توجد بيانات</td></tr>';
                 return;
             }
 
             data.forEach(row => {
                 const tr = document.createElement('tr');
+                
+                // تحقق إذا كان العمود E يحتوي على رابط
+                const columnEContent = row.columnE ? 
+                    (isValidURL(fixURL(row.columnE)) ? 
+                        `<a href="${fixURL(row.columnE)}" target="_blank" class="link">${row.columnE}</a>` : 
+                        row.columnE) :
+                    '';
+                
                 tr.innerHTML = `
                     <td>${row.columnA}</td>
                     <td>${row.columnB}</td>
                     <td>${row.columnC}</td>
+                    <td>${row.columnD}</td>
+                    <td>${columnEContent}</td>
                 `;
                 tableBody.appendChild(tr);
             });
@@ -186,8 +274,20 @@
             displayData(allData);
         }
 
+        function openForm() {
+            // فتح النموذج في نافذة جديدة
+            window.open(formUrl, '_blank');
+        }
+
         // تحميل البيانات تلقائياً عند فتح الصفحة
         window.onload = loadAllData;
+
+        // إمكانية البحث باستخدام زر Enter
+        document.getElementById('searchKey').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchData();
+            }
+        });
     </script>
 </body>
 </html>
