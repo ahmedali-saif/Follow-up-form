@@ -71,6 +71,19 @@
             position: sticky;
             top: 0;
         }
+        /* تخصيص عرض الأعمدة */
+        th:nth-child(1), td:nth-child(1) { width: 20%; } /* العمود A */
+        th:nth-child(2), td:nth-child(2) { width: 20%; } /* العمود B */
+        th:nth-child(3), td:nth-child(3) { width: 20%; } /* العمود C */
+        th:nth-child(4), td:nth-child(4) { width: 20%; } /* العمود D */
+        th:nth-child(5), td:nth-child(5) { width: 20%; } /* العمود E */
+        
+        .column-e {
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
         .error {
             color: red;
             margin-top: 10px;
@@ -93,10 +106,23 @@
             color: #1a73e8;
             text-decoration: underline;
             cursor: pointer;
-            word-break: break-all;
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .link:hover {
             color: #0d47a1;
+        }
+        /* زر لتوسيع النص عند المرور */
+        .column-e:hover {
+            overflow: visible;
+            white-space: normal;
+            word-break: break-all;
+            position: relative;
+            z-index: 1;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         @media (max-width: 768px) {
             .container {
@@ -111,17 +137,25 @@
                 padding: 8px;
                 font-size: 14px;
             }
+            th:nth-child(1), td:nth-child(1),
+            th:nth-child(2), td:nth-child(2),
+            th:nth-child(3), td:nth-child(3),
+            th:nth-child(4), td:nth-child(4),
+            th:nth-child(5), td:nth-child(5) { 
+                width: auto; 
+            }
+            .column-e {
+                max-width: 100px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-         <h1>(متابعة المنشآت البيطرية الخاصة) </h1>
-        
-       <h1>الملاحظات التي تم تسجيلها على المنشآت البيطرية أثناء الزيارات السابقة </h1>
+        <h1>بحث في البيانات من Google Sheets</h1>
         
         <div class="search-box">
-            <input type="text" id="searchKey" placeholder="أدخل اسم المنشأة البيطرية">
+            <input type="text" id="searchKey" placeholder="أدخل مفتاح البحث من العمود A">
             
             <div class="button-group">
                 <button onclick="searchData()">بحث</button>
@@ -137,11 +171,11 @@
             <table id="resultsTable">
                 <thead>
                     <tr>
-                        <th>اسم المنشأة البيطرية</th>
-                        <th>الجهة</th>
-                        <th>التاريخ</th>
-                        <th>الملاحظات</th>
-                        <th>المرفق</th>
+                        <th>العمود A</th>
+                        <th>العمود B</th>
+                        <th>العمود C</th>
+                        <th>العمود D</th>
+                        <th>العمود E</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -237,8 +271,8 @@
                 // تحقق إذا كان العمود E يحتوي على رابط
                 const columnEContent = row.columnE ? 
                     (isValidURL(fixURL(row.columnE)) ? 
-                        `<a href="${fixURL(row.columnE)}" target="_blank" class="link">${row.columnE}</a>` : 
-                        row.columnE) :
+                        `<a href="${fixURL(row.columnE)}" target="_blank" class="link" title="${row.columnE}">${row.columnE}</a>` : 
+                        `<span title="${row.columnE}">${row.columnE}</span>`) :
                     '';
                 
                 tr.innerHTML = `
@@ -246,7 +280,7 @@
                     <td>${row.columnB}</td>
                     <td>${row.columnC}</td>
                     <td>${row.columnD}</td>
-                    <td>${columnEContent}</td>
+                    <td class="column-e">${columnEContent}</td>
                 `;
                 tableBody.appendChild(tr);
             });
