@@ -1,328 +1,473 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>استمارة متابعة المنشآت البيطرية الخاصة</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            direction: rtl;
-            text-align: right;
-            background-color: #f5f5f5;
-            margin: 20px;
-        }
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
-        .search-box {
-            margin: 20px 0;
-            padding: 15px;
-            background-color: #f9f9f9;
-            border-radius: 5px;
-        }
-        input, button {
-            padding: 10px;
-            margin: 5px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        button {
-            background-color: #4285f4;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #3367d6;
-        }
-        .btn-form {
-            background-color: #34a853;
-        }
-        .btn-form:hover {
-            background-color: #2e8b47;
-        }
-        .results {
-            margin-top: 20px;
-            overflow-x: auto;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-            min-width: 600px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: right;
-        }
-        th {
-            background-color: #f2f2f2;
-            position: sticky;
-            top: 0;
-        }
-        /* تخصيص عرض الأعمدة */
-        th:nth-child(1), td:nth-child(1) { width: 20%; } /* العمود A */
-        th:nth-child(2), td:nth-child(2) { width: 20%; } /* العمود B */
-        th:nth-child(3), td:nth-child(3) { width: 20%; } /* العمود C */
-        th:nth-child(4), td:nth-child(4) { width: 20%; } /* العمود D */
-        th:nth-child(5), td:nth-child(5) { width: 20%; } /* العمود E */
-        
-        .column-e {
-            max-width: 150px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .error {
-            color: red;
-            margin-top: 10px;
-        }
-        .loading {
-            color: #4285f4;
-            margin-top: 10px;
-        }
-        .button-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        .button-group button {
-            flex: 1;
-            min-width: 150px;
-        }
-        .link {
-            color: #1a73e8;
-            text-decoration: underline;
-            cursor: pointer;
-            display: block;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .link:hover {
-            color: #0d47a1;
-        }
-        /* زر لتوسيع النص عند المرور */
-        .column-e:hover {
-            overflow: visible;
-            white-space: normal;
-            word-break: break-all;
-            position: relative;
-            z-index: 1;
-            background-color: white;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-                margin: 10px;
-            }
-            .button-group button {
-                min-width: 120px;
-                font-size: 14px;
-            }
-            th, td {
-                padding: 8px;
-                font-size: 14px;
-            }
-            th:nth-child(1), td:nth-child(1),
-            th:nth-child(2), td:nth-child(2),
-            th:nth-child(3), td:nth-child(3),
-            th:nth-child(4), td:nth-child(4),
-            th:nth-child(5), td:nth-child(5) { 
-                width: auto; 
-            }
-            .column-e {
-                max-width: 100px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>منصة البيانات - نظام تسجيل الدخول</title>
+  <style>
+    :root {
+      --primary-color: #5b6df8;
+      --primary-dark: #4350d6;
+      --secondary-color: #00b894;
+      --secondary-dark: #009874;
+      --background-color: #f8f9fa;
+      --card-color: #ffffff;
+      --text-color: #202124;
+      --text-light: #5f6368;
+      --border-color: #dadce0;
+      --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      --radius: 10px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      direction: rtl;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .login-container {
+      max-width: 450px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .card {
+      background-color: var(--card-color);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      padding: 40px 30px;
+      margin-bottom: 24px;
+    }
+
+    /* 🌈 العنوان بتدرج لوني */
+    .logo {
+      font-size: 36px;
+      font-weight: 800;
+      background: linear-gradient(90deg, #4a6cf7, #a86df7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-align: center;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      font-size: 36px;
+    }
+
+    h1 {
+      font-size: 24px;
+      color: var(--text-color);
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .subtitle {
+      color: var(--text-light);
+      font-size: 16px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--text-color);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      font-size: 16px;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.2);
+    }
+
+    /* 🌟 تحسين الأزرار */
+    .btn {
+      padding: 14px 22px;
+      border: none;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .btn-primary {
+      background: linear-gradient(90deg, #4a6cf7, #7a5ff7);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(90, 100, 255, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(90, 100, 255, 0.4);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(90deg, #00b894, #00cec9);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(0, 184, 148, 0.3);
+    }
+
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(0, 184, 148, 0.4);
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      color: var(--primary-color);
+      border: 2px solid var(--primary-color);
+    }
+
+    .btn-outline:hover {
+      background-color: rgba(90, 100, 255, 0.1);
+      transform: translateY(-2px);
+    }
+
+    /* 🔍 تحسين مربع البحث */
+    .search-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 250px;
+      padding: 14px 16px 14px 45px;
+      border: 1px solid var(--border-color);
+      border-radius: 50px;
+      font-size: 16px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      background-image: url('https://cdn-icons-png.flaticon.com/512/622/622669.png');
+      background-repeat: no-repeat;
+      background-size: 20px;
+      background-position: 15px center;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(90, 100, 255, 0.2);
+    }
+
+    .status {
+      padding: 12px;
+      border-radius: 4px;
+      font-size: 14px;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .loading {
+      background-color: rgba(66, 133, 244, 0.1);
+      color: var(--primary-color);
+    }
+
+    .error {
+      background-color: rgba(220, 53, 69, 0.1);
+      color: #dc3545;
+    }
+
+    .success {
+      background-color: rgba(40, 167, 69, 0.1);
+      color: #28a745;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .logout-btn {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      padding: 10px 16px;
+      background-color: #f1f3f4;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .logout-btn:hover {
+      background-color: #e8eaed;
+    }
+
+    .user-info {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      padding: 10px 16px;
+      background-color: #f1f3f4;
+      border-radius: var(--radius);
+      font-size: 14px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 20px 0;
+      color: var(--text-light);
+      font-size: 14px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    /* تحسين تجاوب الصفحة */
+    @media (max-width: 768px) {
+      .search-box {
+        flex-direction: column;
+      }
+      .btn {
+        width: 100%;
+      }
+      .logout-btn,
+      .user-info {
+        position: relative;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin-bottom: 16px;
+        text-align: center;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>(متابعة المنشآت البيطرية الخاصة)</h1>
-         <h1>الملاحظات التي تم تسجيلها على المنشأة البيطرية أثناء الزيارات السابقة</h1>
-        <div class="search-box">
-            <input type="text" id="searchKey" placeholder="أدخل اسم المنشأة البيطرية">
-            
-            <div class="button-group">
-                <button onclick="searchData()">بحث</button>
-                <button onclick="loadAllData()">عرض كل البيانات</button>
-                <button class="btn-form" onclick="openForm()">اذهب إلى النموذج</button>
-            </div>
-        </div>
+  <!-- صفحة تسجيل الدخول -->
+  <div id="loginPage" class="container login-container">
+    <div class="card">
+      <div class="logo">
+        <span class="logo-icon">📊</span>
+        <span>منصة البيانات</span>
+      </div>
+      <h1>تسجيل الدخول</h1>
+      <p class="subtitle">يجب تسجيل الدخول للوصول إلى البيانات</p>
 
-        <div id="loading" class="loading" style="display: none;">جاري تحميل البيانات...</div>
-        <div id="error" class="error"></div>
+      <form id="loginForm">
+        <label for="username">اسم المستخدم</label>
+        <input type="text" id="username" class="form-control" placeholder="أدخل اسم المستخدم" required />
+        <label for="password">كلمة المرور</label>
+        <input type="password" id="password" class="form-control" placeholder="أدخل كلمة المرور" required />
+        <button type="submit" class="btn btn-primary">🔑 تسجيل الدخول</button>
+      </form>
+      <div id="loginStatus" class="status hidden"></div>
 
-        <div class="results">
-            <table id="resultsTable">
-                <thead>
-                    <tr>
-                        <th>اسم المنشأة</th>
-                        <th>الجهة</th>
-                        <th>التاريخ</th>
-                        <th>الملاحظات</th>
-                        <th>المرفق</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                </tbody>
-            </table>
-        </div>
+      <div style="margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-radius: var(--radius); font-size: 14px;">
+        <p style="margin-bottom: 10px; font-weight: bold;">بيانات تجريبية:</p>
+        <p>اسم المستخدم: <strong>admin</strong></p>
+        <p>كلمة المرور: <strong>123456</strong></p>
+      </div>
     </div>
+  </div>
 
-    <script>
-        // تحويل الرابط إلى رابط CSV
-        const sheetUrl = 'https://docs.google.com/spreadsheets/d/1k9schTfP0FLnxVsENzZJqEPiE8fMoL5ZY0ZCyp5lSuw/export?format=csv&gid=0';
+  <!-- التطبيق الرئيسي -->
+  <div id="appPage" class="container hidden">
+    <button class="logout-btn" onclick="logout()">🚪 تسجيل الخروج</button>
+    <div class="user-info" id="userInfo">مرحباً، </div>
 
-        // رابط النموذج
-        const formUrl = 'https://forms.gle/W1AhBrUqoV76eaMN6';
+    <header class="app-header">
+      <div class="logo">منصة البيانات</div>
+      <h1>جلب البيانات من Google Sheets</h1>
+      <p class="subtitle">ابحث وعرض البيانات المخزنة في الجداول</p>
+    </header>
 
-        // دالة للتحقق من أن النص هو رابط
-        function isValidURL(string) {
-            try {
-                new URL(string);
-                return true;
-            } catch (_) {
-                return false;
-            }
-        }
+    <main>
+      <section class="card search-section">
+        <h2>البحث في البيانات</h2>
+        <div class="search-box">
+          <input type="text" id="searchKey" class="search-input" placeholder="🔍 أدخل مفتاح البحث من العمود A" />
+          <div class="button-group">
+            <button class="btn btn-primary" onclick="searchData()">🔍 بحث</button>
+            <button class="btn btn-outline" onclick="loadAllData()">📋 عرض الكل</button>
+            <button class="btn btn-secondary" onclick="openForm()">📝 النموذج</button>
+          </div>
+        </div>
+        <div id="loading" class="status loading hidden">جاري تحميل البيانات...</div>
+        <div id="error" class="status error hidden"></div>
+      </section>
 
-        // دالة لإصلاح الروابط إذا كانت غير مكتملة
-        function fixURL(url) {
-            if (!url) return '';
-            
-            // إذا كان الرابط لا يبدأ بـ http أو https، أضف https://
-            if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                return 'https://' + url;
-            }
-            return url;
-        }
+      <section class="card results-section">
+        <h2>نتائج البحث</h2>
+        <div class="table-container">
+          <table id="resultsTable">
+            <thead>
+              <tr>
+                <th>العمود A</th>
+                <th>العمود B</th>
+                <th>العمود C</th>
+                <th>العمود D</th>
+                <th>العمود E</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <tr>
+                <td colspan="5">
+                  <div class="empty-state">لا توجد بيانات بعد.</div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
 
-        async function fetchData() {
-            try {
-                document.getElementById('loading').style.display = 'block';
-                document.getElementById('error').textContent = '';
+    <footer>
+      <p>جميع الحقوق محفوظة &copy; 2023 - منصة البيانات</p>
+    </footer>
+  </div>
 
-                const response = await fetch(sheetUrl);
-                
-                if (!response.ok) {
-                    throw new Error('فشل في جلب البيانات');
-                }
-                
-                const csvData = await response.text();
-                return parseCSV(csvData);
-            } catch (error) {
-                document.getElementById('error').textContent = 'خطأ: ' + error.message;
-                return [];
-            } finally {
-                document.getElementById('loading').style.display = 'none';
-            }
-        }
+  <script>
+    // روابط البيانات
+    const dataSheetUrl = 'https://docs.google.com/spreadsheets/d/1k9schTfP0FLnxVsENzZJqEPiE8fMoL5ZY0ZCyp5lSuw/export?format=csv&gid=0';
+    const passwordSheetUrl = 'https://docs.google.com/spreadsheets/d/1k9schTfP0FLnxVsENzZJqEPiE8fMoL5ZY0ZCyp5lSuw/export?format=csv&gid=1422274254';
+    const formUrl = 'https://forms.gle/W1AhBrUqoV76eaMN6';
 
-        function parseCSV(csvText) {
-            const lines = csvText.split('\n');
-            const result = [];
-            
-            for (let i = 0; i < lines.length; i++) {
-                const line = lines[i].trim();
-                if (line) {
-                    // تقسيم السطر مع مراعاة الفاصلة
-                    const cells = line.split(',').map(cell => cell.trim());
-                    if (cells.length >= 1) {
-                        result.push({
-                            columnA: cells[0] || '',
-                            columnB: cells[1] || '',
-                            columnC: cells[2] || '',
-                            columnD: cells[3] || '',
-                            columnE: cells[4] || ''
-                        });
-                    }
-                }
-            }
-            return result;
-        }
+    const loginPage = document.getElementById('loginPage');
+    const appPage = document.getElementById('appPage');
+    const loginForm = document.getElementById('loginForm');
+    const loginStatus = document.getElementById('loginStatus');
+    const userInfo = document.getElementById('userInfo');
 
-        function displayData(data) {
-            const tableBody = document.getElementById('tableBody');
-            tableBody.innerHTML = '';
+    window.onload = function () {
+      const isLoggedIn = localStorage.getItem('isLoggedIn');
+      const username = localStorage.getItem('username');
+      if (isLoggedIn === 'true' && username) showApp(username);
+      else showLogin();
+    };
 
-            if (data.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">لا توجد بيانات</td></tr>';
-                return;
-            }
+    function showLogin() {
+      loginPage.classList.remove('hidden');
+      appPage.classList.add('hidden');
+    }
 
-            data.forEach(row => {
-                const tr = document.createElement('tr');
-                
-                // تحقق إذا كان العمود E يحتوي على رابط
-                const columnEContent = row.columnE ? 
-                    (isValidURL(fixURL(row.columnE)) ? 
-                        `<a href="${fixURL(row.columnE)}" target="_blank" class="link" title="${row.columnE}">${row.columnE}</a>` : 
-                        `<span title="${row.columnE}">${row.columnE}</span>`) :
-                    '';
-                
-                tr.innerHTML = `
-                    <td>${row.columnA}</td>
-                    <td>${row.columnB}</td>
-                    <td>${row.columnC}</td>
-                    <td>${row.columnD}</td>
-                    <td class="column-e">${columnEContent}</td>
-                `;
-                tableBody.appendChild(tr);
-            });
-        }
+    function showApp(username) {
+      loginPage.classList.add('hidden');
+      appPage.classList.remove('hidden');
+      userInfo.textContent = `مرحباً، ${username}`;
+      loadAllData();
+    }
 
-        async function searchData() {
-            const searchKey = document.getElementById('searchKey').value.trim();
-            
-            if (!searchKey) {
-                document.getElementById('error').textContent = 'يرجى إدخال اسم المنشأة البيطرية';
-                return;
-            }
+    function logout() {
+      localStorage.clear();
+      showLogin();
+    }
 
-            const allData = await fetchData();
-            const filteredData = allData.filter(row => 
-                row.columnA.toLowerCase().includes(searchKey.toLowerCase())
-            );
+    loginForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      if (!username || !password) return showLoginStatus('يرجى إدخال اسم المستخدم وكلمة المرور', 'error');
+      showLoginStatus('جاري التحقق...', 'loading');
+      const valid = await validateLogin(username, password);
+      if (valid) {
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('username', username);
+        showLoginStatus('تم الدخول بنجاح!', 'success');
+        setTimeout(() => showApp(username), 1000);
+      } else showLoginStatus('بيانات الدخول غير صحيحة', 'error');
+    });
 
-            displayData(filteredData);
-        }
+    function showLoginStatus(msg, type) {
+      loginStatus.textContent = msg;
+      loginStatus.className = 'status ' + type;
+      loginStatus.classList.remove('hidden');
+    }
 
-        async function loadAllData() {
-            document.getElementById('searchKey').value = '';
-            const allData = await fetchData();
-            displayData(allData);
-        }
-
-        function openForm() {
-            // فتح النموذج في نافذة جديدة
-            window.open(formUrl, '_blank');
-        }
-
-        // تحميل البيانات تلقائياً عند فتح الصفحة
-        window.onload = loadAllData;
-
-        // إمكانية البحث باستخدام زر Enter
-        document.getElementById('searchKey').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                searchData();
-            }
+    async function validateLogin(username, password) {
+      try {
+        const res = await fetch(passwordSheetUrl);
+        const csv = await res.text();
+        const lines = csv.split('\n').map(l => l.trim());
+        return lines.some(l => {
+          const [u, p] = l.split(',').map(x => x.trim());
+          return u && p && u.toLowerCase() === username.toLowerCase() && p === password;
         });
-    </script>
+      } catch {
+        return username === 'admin' && password === '123456';
+      }
+    }
+
+    async function fetchData() {
+      const res = await fetch(dataSheetUrl);
+      const csv = await res.text();
+      const lines = csv.split('\n').filter(Boolean);
+      return lines.map(l => {
+        const c = l.split(',');
+        return { a: c[0] || '', b: c[1] || '', c: c[2] || '', d: c[3] || '', e: c[4] || '' };
+      });
+    }
+
+    async function loadAllData() {
+      const data = await fetchData();
+      displayData(data);
+    }
+
+    async function searchData() {
+      const key = document.getElementById('searchKey').value.trim().toLowerCase();
+      const data = await fetchData();
+      displayData(data.filter(r => r.a.toLowerCase().includes(key)));
+    }
+
+    function displayData(data) {
+      const tbody = document.getElementById('tableBody');
+      tbody.innerHTML = '';
+      if (!data.length) {
+        tbody.innerHTML = '<tr><td colspan="5">لا توجد بيانات مطابقة</td></tr>';
+        return;
+      }
+      data.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${r.a}</td><td>${r.b}</td><td>${r.c}</td><td>${r.d}</td><td>${r.e}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function openForm() {
+      window.open(formUrl, '_blank');
+    }
+  </script>
 </body>
 </html>
-
