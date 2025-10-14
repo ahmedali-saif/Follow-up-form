@@ -314,6 +314,8 @@
     .table-container {
       overflow-x: auto;
       margin-top: 20px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
     }
 
     table {
@@ -330,6 +332,11 @@
     th {
       background-color: #f8f9fa;
       font-weight: 600;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    tr:not(:last-child) {
+      border-bottom: 1px solid var(--border-color);
     }
 
     tr:hover {
@@ -347,10 +354,21 @@
       gap: 10px;
     }
 
+    /* تحسينات العمود E - قص النص */
+    .col-e {
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
     @media (max-width: 768px) {
       .button-group {
         flex-direction: column;
         width: 100%;
+      }
+      .col-e {
+        max-width: 120px;
       }
     }
   </style>
@@ -486,13 +504,19 @@
         rememberMe.checked = true;
       }
       
-      if (isLoggedIn === 'true' && username) showApp(username);
-      else showLogin();
+      if (isLoggedIn === 'true' && username) {
+        showApp(username);
+      } else {
+        showLogin();
+      }
     };
 
     function showLogin() {
       loginPage.classList.remove('hidden');
       appPage.classList.add('hidden');
+      // إعادة تعيين رسالة الحالة عند العودة لصفحة تسجيل الدخول
+      loginStatus.classList.add('hidden');
+      loginStatus.textContent = '';
     }
 
     function showApp(username) {
@@ -502,11 +526,33 @@
       loadAllData();
     }
 
-    function logout() {
-      localStorage.removeItem('isLoggedIn');
-      localStorage.removeItem('username');
-      showLogin();
-    }
+  function logout() {
+    // إزالة بيانات الدخول من التخزين المحلي
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('username');
+
+    // إخفاء رسالة الحالة
+    loginStatus.classList.add('hidden');
+    loginStatus.textContent = '';
+
+    // العودة إلى صفحة تسجيل الدخول
+    showLogin();
+
+    // ✅ إعادة الزر إلى حالته الطبيعية
+    toggleButtonLoading(loginBtn, false);
+
+    // ✅ تصفير الحقول بعد تسجيل الخروج
+    document.getElementById('username').value = '';
+    document.getElementById('password').value = '';
+    rememberMe.checked = false;
+
+    // ✅ إعادة النص الأصلي للزر في حال كان ما زال "جاري المعالجة"
+    const btnText = loginBtn.querySelector('.btn-text');
+    const spinner = loginBtn.querySelector('.spinner');
+    spinner.classList.add('hidden');
+    btnText.textContent = '🔑 تسجيل الدخول';
+    loginBtn.disabled = false;
+  }
 
     loginForm.addEventListener('submit', async function (e) {
       e.preventDefault();
@@ -626,7 +672,13 @@
       
       data.forEach(r => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${r.a}</td><td>${r.b}</td><td>${r.c}</td><td>${r.d}</td><td>${r.e}</td>`;
+        tr.innerHTML = `
+          <td>${r.a}</td>
+          <td>${r.b}</td>
+          <td>${r.c}</td>
+          <td>${r.d}</td>
+          <td class="col-e">${r.e}</td>
+        `;
         tbody.appendChild(tr);
       });
     }
