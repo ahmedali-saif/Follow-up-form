@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>منصة البيانات - نظام تسجيل الدخول</title>
+  <title> متابعة المنشآت البيطرية الخاصة - نظام تسجيل الدخول</title>
   <style>
     :root {
       --primary-color: #5b6df8;
@@ -57,11 +57,11 @@
       margin-bottom: 24px;
     }
 
-    /* 🌈 العنوان بتدرج لوني */
+    /* 🌈 العنوان بتدرج لوني - تغيير إلى اللون الأخضر */
     .logo {
       font-size: 36px;
       font-weight: 800;
-      background: linear-gradient(90deg, #4a6cf7, #a86df7);
+      background: linear-gradient(90deg, #00b894, #00cec9);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       text-align: center;
@@ -314,8 +314,9 @@
     .table-container {
       overflow-x: auto;
       margin-top: 20px;
-      border: 1px solid var(--border-color);
+      border: 2px solid #e0e0e0; /* إضافة حدود خارجية للجدول */
       border-radius: var(--radius);
+      background-color: white;
     }
 
     table {
@@ -326,21 +327,22 @@
     th, td {
       padding: 12px 15px;
       text-align: right;
-      border-bottom: 1px solid var(--border-color);
+      border: 1px solid #e0e0e0; /* إضافة حدود واضحة للخلايا */
     }
 
     th {
-      background-color: #f8f9fa;
-      font-weight: 600;
-      border-bottom: 2px solid var(--border-color);
+      background-color: #f5f5f5;
+      font-weight: 700;
+      color: #333;
+      border-bottom: 2px solid #d0d0d0; /* خط أسفل العناوين أكثر سماكة */
     }
 
-    tr:not(:last-child) {
-      border-bottom: 1px solid var(--border-color);
+    tr {
+      border-bottom: 1px solid #e0e0e0;
     }
 
     tr:hover {
-      background-color: rgba(0, 0, 0, 0.02);
+      background-color: rgba(0, 184, 148, 0.05); /* تغيير لون التظليل إلى أخضر فاتح */
     }
 
     .empty-state {
@@ -362,6 +364,20 @@
       white-space: nowrap;
     }
 
+    /* 🔗 تنسيق الروابط في العمود E */
+    .link-cell {
+      color: var(--primary-color);
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 0.2s;
+      word-break: break-all;
+    }
+
+    .link-cell:hover {
+      color: var(--primary-dark);
+      text-decoration: underline;
+    }
+
     @media (max-width: 768px) {
       .button-group {
         flex-direction: column;
@@ -379,10 +395,10 @@
     <div class="card">
       <div class="logo">
         <span class="logo-icon">📊</span>
-        <span>منصة البيانات</span>
+        <span>متابعة المنشآت البيطرية الخاصة</span>
       </div>
       <h1>تسجيل الدخول</h1>
-      <p class="subtitle">يجب تسجيل الدخول للوصول إلى البيانات</p>
+      <p class="subtitle">للحصول على بيانات الدخول (اسم المستخدم وكلمة المرور) تواصل مع المالك</p>
 
       <form id="loginForm">
         <div class="form-group">
@@ -481,7 +497,7 @@
     // روابط البيانات
     const dataSheetUrl = 'https://docs.google.com/spreadsheets/d/1k9schTfP0FLnxVsENzZJqEPiE8fMoL5ZY0ZCyp5lSuw/export?format=csv&gid=0';
     const passwordSheetUrl = 'https://docs.google.com/spreadsheets/d/1k9schTfP0FLnxVsENzZJqEPiE8fMoL5ZY0ZCyp5lSuw/export?format=csv&gid=1422274254';
-    const formUrl = 'https://forms.gle/W1AhBrUqoV76eaMN6';
+    const formUrl = 'https://forms.gle/7PFyAkbcrrK6JUxf7';
 
     const loginPage = document.getElementById('loginPage');
     const appPage = document.getElementById('appPage');
@@ -526,33 +542,14 @@
       loadAllData();
     }
 
-  function logout() {
-    // إزالة بيانات الدخول من التخزين المحلي
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('username');
-
-    // إخفاء رسالة الحالة
-    loginStatus.classList.add('hidden');
-    loginStatus.textContent = '';
-
-    // العودة إلى صفحة تسجيل الدخول
-    showLogin();
-
-    // ✅ إعادة الزر إلى حالته الطبيعية
-    toggleButtonLoading(loginBtn, false);
-
-    // ✅ تصفير الحقول بعد تسجيل الخروج
-    document.getElementById('username').value = '';
-    document.getElementById('password').value = '';
-    rememberMe.checked = false;
-
-    // ✅ إعادة النص الأصلي للزر في حال كان ما زال "جاري المعالجة"
-    const btnText = loginBtn.querySelector('.btn-text');
-    const spinner = loginBtn.querySelector('.spinner');
-    spinner.classList.add('hidden');
-    btnText.textContent = '🔑 تسجيل الدخول';
-    loginBtn.disabled = false;
-  }
+    function logout() {
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('username');
+      // إعادة تعيين رسالة الحالة
+      loginStatus.classList.add('hidden');
+      loginStatus.textContent = '';
+      showLogin();
+    }
 
     loginForm.addEventListener('submit', async function (e) {
       e.preventDefault();
@@ -672,15 +669,43 @@
       
       data.forEach(r => {
         const tr = document.createElement('tr');
+        
+        // تحويل النص في العمود E إلى رابط قابل للنقر إذا كان يحتوي على رابط
+        let columnE = r.e;
+        if (isValidUrl(columnE)) {
+          columnE = `<a href="${formatUrl(columnE)}" target="_blank" class="link-cell">${columnE}</a>`;
+        }
+        
         tr.innerHTML = `
           <td>${r.a}</td>
           <td>${r.b}</td>
           <td>${r.c}</td>
           <td>${r.d}</td>
-          <td class="col-e">${r.e}</td>
+          <td class="col-e">${columnE}</td>
         `;
         tbody.appendChild(tr);
       });
+    }
+
+    // دالة للتحقق مما إذا كان النص رابطاً صالحاً
+    function isValidUrl(string) {
+      if (!string) return false;
+      
+      // نمط للتحقق من الروابط
+      const urlPattern = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?$/i;
+      return urlPattern.test(string.trim());
+    }
+
+    // دالة لتنسيق الرابط بإضافة https:// إذا لم يكن موجوداً
+    function formatUrl(url) {
+      if (!url) return '';
+      
+      let formattedUrl = url.trim();
+      if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
+        formattedUrl = 'https://' + formattedUrl;
+      }
+      
+      return formattedUrl;
     }
 
     function openForm() {
