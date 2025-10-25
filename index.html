@@ -57,7 +57,6 @@
       margin-bottom: 24px;
     }
 
-    /* 🌈 العنوان بتدرج لوني - تغيير إلى اللون الأخضر */
     .logo {
       font-size: 36px;
       font-weight: 800;
@@ -112,7 +111,6 @@
       box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.2);
     }
 
-    /* 🌟 تحسين الأزرار */
     .btn {
       padding: 14px 22px;
       border: none;
@@ -167,7 +165,6 @@
       transform: translateY(-2px);
     }
 
-    /* 🔍 تحسين مربع البحث */
     .search-box {
       position: relative;
       display: flex;
@@ -262,7 +259,6 @@
       border-top: 1px solid var(--border-color);
     }
 
-    /* تحسين تجاوب الصفحة */
     @media (max-width: 768px) {
       .search-box {
         flex-direction: column;
@@ -281,20 +277,8 @@
       }
     }
 
-    /* تحسينات إضافية */
     .form-group {
       margin-bottom: 20px;
-    }
-
-    .remember-me {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin: 15px 0;
-    }
-
-    .remember-me input {
-      width: auto;
     }
 
     .spinner {
@@ -314,7 +298,7 @@
     .table-container {
       overflow-x: auto;
       margin-top: 20px;
-      border: 2px solid #e0e0e0; /* إضافة حدود خارجية للجدول */
+      border: 2px solid #e0e0e0;
       border-radius: var(--radius);
       background-color: white;
     }
@@ -327,14 +311,14 @@
     th, td {
       padding: 12px 15px;
       text-align: right;
-      border: 1px solid #e0e0e0; /* إضافة حدود واضحة للخلايا */
+      border: 1px solid #e0e0e0;
     }
 
     th {
       background-color: #f5f5f5;
       font-weight: 700;
       color: #333;
-      border-bottom: 2px solid #d0d0d0; /* خط أسفل العناوين أكثر سماكة */
+      border-bottom: 2px solid #d0d0d0;
     }
 
     tr {
@@ -342,7 +326,7 @@
     }
 
     tr:hover {
-      background-color: rgba(0, 184, 148, 0.05); /* تغيير لون التظليل إلى أخضر فاتح */
+      background-color: rgba(0, 184, 148, 0.05);
     }
 
     .empty-state {
@@ -356,7 +340,6 @@
       gap: 10px;
     }
 
-    /* تحسينات العمود E - قص النص */
     .col-e {
       max-width: 200px;
       overflow: hidden;
@@ -364,7 +347,6 @@
       white-space: nowrap;
     }
 
-    /* 🔗 تنسيق الروابط في العمود E */
     .link-cell {
       color: var(--primary-color);
       text-decoration: none;
@@ -409,19 +391,14 @@
         <div class="form-group">
           <label for="password">كلمة المرور</label>
           <input type="password" id="password" class="form-control" placeholder="أدخل كلمة المرور" required />
-        </div>     
-       <div class="remember-me">
-       <input type="" id="rememberMe" />
         </div>
+        
         <button type="submit" class="btn btn-primary" id="loginBtn">
           <span class="btn-text">🔑 تسجيل الدخول</span>
           <span class="spinner hidden"></span>
         </button>
       </form>
       <div id="loginStatus" class="status hidden"></div>
-
-      <div style="margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-radius: var(--radius); font-size: 14px;">
-      </div>
     </div>
   </div>
 
@@ -501,17 +478,24 @@
     const loginBtn = document.getElementById('loginBtn');
     const searchBtn = document.getElementById('searchBtn');
     const loadAllBtn = document.getElementById('loadAllBtn');
-    const rememberMe = document.getElementById('rememberMe');
 
     window.onload = function () {
       const isLoggedIn = localStorage.getItem('isLoggedIn');
       const username = localStorage.getItem('username');
-      const remember = localStorage.getItem('rememberMe') === 'true';
+      const loginTime = localStorage.getItem('loginTime');
       
-      // استعادة بيانات تسجيل الدخول إذا تم اختيار "تذكرني"
-      if (remember && username) {
-        document.getElementById('username').value = username;
-        rememberMe.checked = true;
+      // التحقق من انتهاء الجلسة (24 ساعة)
+      if (loginTime) {
+        const currentTime = new Date().getTime();
+        const sessionDuration = 24 * 60 * 60 * 1000; // 24 ساعة
+        if (currentTime - parseInt(loginTime) > sessionDuration) {
+          // انتهت الجلسة، تسجيل الخروج التلقائي
+          localStorage.removeItem('isLoggedIn');
+          localStorage.removeItem('username');
+          localStorage.removeItem('loginTime');
+          showLogin();
+          return;
+        }
       }
       
       if (isLoggedIn === 'true' && username) {
@@ -524,7 +508,6 @@
     function showLogin() {
       loginPage.classList.remove('hidden');
       appPage.classList.add('hidden');
-      // إعادة تعيين رسالة الحالة عند العودة لصفحة تسجيل الدخول
       loginStatus.classList.add('hidden');
       loginStatus.textContent = '';
     }
@@ -536,42 +519,38 @@
       loadAllData();
     }
 
-  function logout() {
-    // إزالة بيانات الدخول من التخزين المحلي
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('username');
+    function logout() {
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('username');
+      localStorage.removeItem('loginTime');
 
-    // إخفاء رسالة الحالة
-    loginStatus.classList.add('hidden');
-    loginStatus.textContent = '';
+      loginStatus.classList.add('hidden');
+      loginStatus.textContent = '';
 
-    // العودة إلى صفحة تسجيل الدخول
-    showLogin();
+      showLogin();
 
-    // ✅ إعادة الزر إلى حالته الطبيعية
-    toggleButtonLoading(loginBtn, false);
+      toggleButtonLoading(loginBtn, false);
 
-    // ✅ تصفير الحقول بعد تسجيل الخروج
-    document.getElementById('username').value = '';
-    document.getElementById('password').value = '';
-    rememberMe.checked = false;
+      document.getElementById('username').value = '';
+      document.getElementById('password').value = '';
 
-    // ✅ إعادة النص الأصلي للزر في حال كان ما زال "جاري المعالجة"
-    const btnText = loginBtn.querySelector('.btn-text');
-    const spinner = loginBtn.querySelector('.spinner');
-    spinner.classList.add('hidden');
-    btnText.textContent = '🔑 تسجيل الدخول';
-    loginBtn.disabled = false;
-  }
+      const btnText = loginBtn.querySelector('.btn-text');
+      const spinner = loginBtn.querySelector('.spinner');
+      spinner.classList.add('hidden');
+      btnText.textContent = '🔑 تسجيل الدخول';
+      loginBtn.disabled = false;
+    }
+
     loginForm.addEventListener('submit', async function (e) {
       e.preventDefault();
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value.trim();
-      const remember = rememberMe.checked;
       
-      if (!username || !password) return showLoginStatus('يرجى إدخال اسم المستخدم وكلمة المرور', 'error');
+      if (!username || !password) {
+        showLoginStatus('يرجى إدخال اسم المستخدم وكلمة المرور', 'error');
+        return;
+      }
       
-      // تعطيل الزر وإظهار المؤشر
       toggleButtonLoading(loginBtn, true);
       showLoginStatus('جاري التحقق...', 'loading');
       
@@ -580,7 +559,8 @@
         if (valid) {
           localStorage.setItem('isLoggedIn', 'true');
           localStorage.setItem('username', username);
-          localStorage.setItem('rememberMe', remember);
+          localStorage.setItem('loginTime', new Date().getTime().toString());
+          
           showLoginStatus('تم الدخول بنجاح!', 'success');
           setTimeout(() => showApp(username), 1000);
         } else {
@@ -588,6 +568,7 @@
           toggleButtonLoading(loginBtn, false);
         }
       } catch (error) {
+        console.error('خطأ في تسجيل الدخول:', error);
         showLoginStatus('حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى.', 'error');
         toggleButtonLoading(loginBtn, false);
       }
@@ -605,14 +586,23 @@
         if (!res.ok) throw new Error('فشل في جلب البيانات');
         
         const csv = await res.text();
-        const lines = csv.split('\n').map(l => l.trim());
-        return lines.some(l => {
-          const [u, p] = l.split(',').map(x => x.trim());
-          return u && p && u.toLowerCase() === username.toLowerCase() && p === password;
+        const lines = csv.split('\n').map(l => l.trim()).filter(line => line.length > 0);
+        
+        // تخطي الصف الأول إذا كان يحتوي على عناوين
+        const dataLines = lines.slice(1);
+        
+        return dataLines.some(line => {
+          const columns = line.split(',').map(col => col.trim().replace(/^"|"$/g, ''));
+          if (columns.length >= 2) {
+            const u = columns[0];
+            const p = columns[1];
+            return u && p && u.toLowerCase() === username.toLowerCase() && p === password;
+          }
+          return false;
         });
-      } catch {
-        // استخدام بيانات تجريبية في حالة فشل الاتصال
-        return username === 'admin' && password === '123456';
+      } catch (error) {
+        console.error('خطأ في التحقق:', error);
+        return false;
       }
     }
 
@@ -682,7 +672,6 @@
       data.forEach(r => {
         const tr = document.createElement('tr');
         
-        // تحويل النص في العمود E إلى رابط قابل للنقر إذا كان يحتوي على رابط
         let columnE = r.e;
         if (isValidUrl(columnE)) {
           columnE = `<a href="${formatUrl(columnE)}" target="_blank" class="link-cell">${columnE}</a>`;
@@ -699,16 +688,12 @@
       });
     }
 
-    // دالة للتحقق مما إذا كان النص رابطاً صالحاً
     function isValidUrl(string) {
       if (!string) return false;
-      
-      // نمط للتحقق من الروابط
       const urlPattern = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?$/i;
       return urlPattern.test(string.trim());
     }
 
-    // دالة لتنسيق الرابط بإضافة https:// إذا لم يكن موجوداً
     function formatUrl(url) {
       if (!url) return '';
       
@@ -724,7 +709,6 @@
       window.open(formUrl, '_blank');
     }
 
-    // وظائف مساعدة جديدة
     function toggleButtonLoading(button, isLoading) {
       const spinner = button.querySelector('.spinner');
       const btnText = button.querySelector('.btn-text');
@@ -737,7 +721,6 @@
         button.disabled = false;
         spinner.classList.add('hidden');
         
-        // استعادة النص الأصلي للزر
         if (button.id === 'loginBtn') {
           btnText.textContent = '🔑 تسجيل الدخول';
         } else if (button.id === 'searchBtn') {
@@ -770,12 +753,3 @@
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
